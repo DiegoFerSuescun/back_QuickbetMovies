@@ -22,4 +22,12 @@ export class AuthController {
     ){
         return this.authService.login(email, password);
     }
+
+    @Post('recovery')
+    async recovery(
+        @Body("email") email: string,
+        @Body( "newpass") newpass : string
+    ){
+        return this.authService.recoverypass(email, newpass)
+    }
 }

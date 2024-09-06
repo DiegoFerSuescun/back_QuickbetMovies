@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs'
@@ -43,5 +43,17 @@ export class AuthService {
         return{
             access_token : this.jwtService.sign(payload),
         };
+    }
+
+    //para restablecer contraseña
+
+    async recoverypass (email: string, newpass : string): Promise<any>{
+        const exist = this.userService.getallusers().find(user => user.email == email);
+        if(!exist){
+            throw new NotFoundException("No existe el usuario")
+        };
+        const hashedPass = await bcrypt.hash(newpass, 10);
+        exist.password = hashedPass;
+        return { user : exist ,message: 'Contraseña actualizada exitosamente' };
     }
 }
